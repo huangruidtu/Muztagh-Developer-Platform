@@ -22,10 +22,11 @@ the correctness of declarations they submit through published interfaces.
 
 ## Non-goals for the reference implementation
 
-This story introduces only the Terraform structure for shared AWS network, EKS,
-and baseline platform identity. It does not introduce Argo CD, Crossplane,
-Cilium, Kyverno, CI, observability, CPEmon onboarding, workload templates,
-service-level objectives, or production operating procedures.
+The repository contains Terraform structure for the shared AWS foundation and
+Argo CD manifests for GitOps reconciliation. Neither has been applied to a live
+environment. Crossplane, Cilium, Kyverno, CI, observability, CPEmon onboarding,
+workload templates, service-level objectives, and production operating
+procedures remain out of scope.
 
 ## Repository boundaries
 

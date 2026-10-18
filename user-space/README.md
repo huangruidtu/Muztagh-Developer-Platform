@@ -5,3 +5,6 @@ platform contracts. A domain team owns its workloads and the inputs it supplies
 to those contracts; it does not modify platform-managed implementation assets.
 
 No workload templates or examples are included in this foundation story.
+
+The [gitops/](gitops/) directory is the placeholder root reconciled by the
+Muztagh user-space Argo CD Application.
