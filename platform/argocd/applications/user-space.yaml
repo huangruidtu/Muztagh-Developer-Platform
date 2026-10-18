@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: muztagh-user-space
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  project: muztagh
+  source:
+    repoURL: https://github.com/huangruidtu/Muztagh-Developer-Platform.git
+    targetRevision: main
+    path: user-space/gitops
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: user-space
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 1m
