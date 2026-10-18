@@ -28,5 +28,5 @@ spec:
     - group: rbac.authorization.k8s.io
       kind: ClusterRole
   namespaceResourceWhitelist:
-    - group: "*"
-      kind: "*"
+    - group: argoproj.io
+      kind: Application

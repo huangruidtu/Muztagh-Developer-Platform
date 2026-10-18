@@ -115,7 +115,7 @@ spec:
                   region: eu-west-1
                   rule:
                     - applyServerSideEncryptionByDefault:
-                        - sseAlgorithm: AES256
+                        sseAlgorithm: AES256
                 managementPolicies:
                   - "*"
                 providerConfigRef:

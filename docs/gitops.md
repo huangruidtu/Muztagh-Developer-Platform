@@ -12,6 +12,10 @@ and the exact Crossplane package, definition, composition, and RBAC kinds used
 by MDP-5. Additional cluster-scoped kinds require reviewed allowlist changes;
 wildcard cluster permissions are not used.
 
+The namespaced allowlist contains only the Argo CD `Application` kind required
+by the App-of-Apps hierarchy. Later stories may add specific namespaced kinds
+when user-space declarations become GitOps-managed; they are not pre-authorized.
+
 The root Application reconciles three child Applications:
 
 ```text
