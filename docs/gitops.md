@@ -6,8 +6,13 @@ not install Argo CD and have not been applied to a cluster.
 ## Application hierarchy
 
 The bootstrap AppProject restricts sources to this repository and destinations
-to the in-cluster Kubernetes API. The root Application reconciles three child
-Applications:
+to the `argocd`, `platform-system`, and `user-space` namespaces on the
+in-cluster Kubernetes API. Its cluster-scoped allowlist contains only
+`Namespace`. Later stories such as Crossplane must add each required
+cluster-scoped kind explicitly through review; wildcard cluster permissions are
+not part of this bootstrap.
+
+The root Application reconciles three child Applications:
 
 ```text
 muztagh-platform
@@ -21,11 +26,15 @@ shared capabilities or policies, and domain declarations without changing the
 bootstrap model. ApplicationSet is not used because three static boundaries do
 not require generation.
 
-Sync waves order child Application resources as controllers, capabilities, then
-user space. They make creation order explicit but do not replace runtime
-readiness checks inside future components. If an upstream component is not
-ready, its Application remains unhealthy and downstream reconciliation may fail
-and retry rather than treating the dependency as available.
+Sync waves order the child Application resources as controllers, capabilities,
+then user space. Each child Application reconciles independently. Argo CD does
+not provide the former built-in health assessment for Application custom
+resources by default, so these waves are not a hard runtime-readiness barrier
+between child Applications.
+
+If strict child-Application readiness gating is required later, Muztagh must add
+an explicit Application health customization or use another dependency
+strategy. MDP-4 does not configure either mechanism.
 
 ## Reconciliation
 

@@ -8,7 +8,11 @@ spec:
   sourceRepos:
     - https://github.com/huangruidtu/Muztagh-Developer-Platform.git
   destinations:
-    - namespace: "*"
+    - namespace: argocd
+      server: https://kubernetes.default.svc
+    - namespace: platform-system
+      server: https://kubernetes.default.svc
+    - namespace: user-space
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: ""
