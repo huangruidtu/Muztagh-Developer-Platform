@@ -34,14 +34,18 @@ module "platform_identity" {
 module "eks" {
   source = "../../modules/eks"
 
+  depends_on = [module.platform_identity]
+
   name                = local.cluster_name
   kubernetes_version  = var.kubernetes_version
   private_subnet_ids  = module.network.private_subnet_ids
   cluster_role_arn    = module.platform_identity.eks_cluster_role_arn
   node_role_arn       = module.platform_identity.eks_node_role_arn
   node_instance_types = var.node_instance_types
-  node_desired_size   = var.node_desired_size
-  node_min_size       = var.node_min_size
-  node_max_size       = var.node_max_size
-  tags                = local.common_tags
+  node_scaling = {
+    min_size     = var.node_min_size
+    desired_size = var.node_desired_size
+    max_size     = var.node_max_size
+  }
+  tags = local.common_tags
 }

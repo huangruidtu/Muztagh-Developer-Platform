@@ -16,6 +16,10 @@ independently. Environment roots are intentionally thin: they set names, CIDR
 ranges, availability zones, and node-group sizing, then connect module outputs
 to module inputs.
 
+The reference foundation attaches `AmazonEKS_CNI_Policy` to the node role.
+Moving CNI permissions to a least-privilege workload identity, such as IRSA or
+another later identity model, is deferred to identity and security work.
+
 Names use the `muztagh-<environment>` prefix, with the EKS cluster named
 `muztagh-<environment>-eks`. Environment roots apply `Environment`, `Owner`,
 `CostCenter`, `Platform`, and `ManagedBy` tags; modules add their component tag

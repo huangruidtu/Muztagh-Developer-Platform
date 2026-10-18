@@ -27,9 +27,9 @@ resource "aws_eks_node_group" "this" {
   instance_types  = var.node_instance_types
 
   scaling_config {
-    desired_size = var.node_desired_size
-    max_size     = var.node_max_size
-    min_size     = var.node_min_size
+    desired_size = var.node_scaling.desired_size
+    max_size     = var.node_scaling.max_size
+    min_size     = var.node_scaling.min_size
   }
 
   tags = local.common_tags
