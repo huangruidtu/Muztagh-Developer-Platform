@@ -1,0 +1,12 @@
+aws_region         = "eu-central-1"
+availability_zones = ["eu-central-1a", "eu-central-1b"]
+vpc_cidr           = "10.10.0.0/16"
+
+public_subnet_cidrs  = ["10.10.0.0/20", "10.10.16.0/20"]
+private_subnet_cidrs = ["10.10.128.0/20", "10.10.144.0/20"]
+
+kubernetes_version  = "1.31"
+node_instance_types  = ["t3.medium"]
+node_desired_size    = 2
+node_min_size        = 2
+node_max_size        = 3

@@ -1,9 +1,9 @@
 # Foundation
 
-This directory is reserved for Terraform-owned shared infrastructure
-foundation. It will hold the infrastructure layer on which the platform control
-plane depends.
+This directory contains Terraform-owned shared infrastructure foundation. The
+Terraform root is [terraform/](terraform/), with reusable modules and separate
+environment compositions.
 
-Terraform configuration and provider-specific resources are not implemented by
-this story. Changes here require platform-team review because they affect shared
-infrastructure dependencies.
+Terraform owns the shared AWS network, EKS foundation, baseline platform IAM,
+and their lifecycle. It does not own developer-requested resources exposed by
+future Crossplane APIs.
