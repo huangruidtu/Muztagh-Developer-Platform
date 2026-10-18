@@ -22,10 +22,10 @@ the correctness of declarations they submit through published interfaces.
 
 ## Non-goals for the reference implementation
 
-This story does not introduce infrastructure provisioning, deployment tooling,
-networking, policy engines, continuous integration, observability, or CPEmon
-onboarding. It also does not define workload templates, environment topology,
-access controls, service-level objectives, or production operating procedures.
+This story introduces only the Terraform structure for shared AWS network, EKS,
+and baseline platform identity. It does not introduce Argo CD, Crossplane,
+Cilium, Kyverno, CI, observability, CPEmon onboarding, workload templates,
+service-level objectives, or production operating procedures.
 
 ## Repository boundaries
 
