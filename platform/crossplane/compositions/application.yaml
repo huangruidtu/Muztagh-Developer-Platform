@@ -1,0 +1,109 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: application.platform.muztagh.io
+spec:
+  compositeTypeRef:
+    apiVersion: platform.muztagh.io/v1alpha1
+    kind: Application
+  mode: Pipeline
+  pipeline:
+    - step: compose-application
+      functionRef:
+        name: function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: deployment
+            base:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                labels:
+                  app.kubernetes.io/managed-by: crossplane
+                  platform.muztagh.io/managed-by: platform
+                  platform.muztagh.io/platform: muztagh
+              spec:
+                replicas: 1
+                selector:
+                  matchLabels:
+                    platform.muztagh.io/application: placeholder
+                template:
+                  metadata:
+                    labels:
+                      platform.muztagh.io/application: placeholder
+                  spec:
+                    containers:
+                      - name: application
+                        image: placeholder:latest
+                        ports:
+                          - name: http
+                            containerPort: 8080
+                            protocol: TCP
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: metadata.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: metadata.labels[platform.muztagh.io/application]
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: spec.selector.matchLabels[platform.muztagh.io/application]
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: spec.template.metadata.labels[platform.muztagh.io/application]
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.replicas
+                toFieldPath: spec.replicas
+              - type: CombineFromComposite
+                combine:
+                  variables:
+                    - fromFieldPath: spec.image
+                    - fromFieldPath: spec.tag
+                  strategy: string
+                  string:
+                    fmt: "%s:%s"
+                toFieldPath: spec.template.spec.containers[0].image
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.port
+                toFieldPath: spec.template.spec.containers[0].ports[0].containerPort
+            readinessChecks:
+              - type: MatchCondition
+                matchCondition:
+                  type: Available
+                  status: "True"
+          - name: service
+            base:
+              apiVersion: v1
+              kind: Service
+              metadata:
+                labels:
+                  app.kubernetes.io/managed-by: crossplane
+                  platform.muztagh.io/managed-by: platform
+                  platform.muztagh.io/platform: muztagh
+              spec:
+                type: ClusterIP
+                selector:
+                  platform.muztagh.io/application: placeholder
+                ports:
+                  - name: http
+                    port: 8080
+                    targetPort: http
+                    protocol: TCP
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: metadata.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: metadata.labels[platform.muztagh.io/application]
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: spec.selector[platform.muztagh.io/application]
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.port
+                toFieldPath: spec.ports[0].port
+            readinessChecks:
+              - type: None

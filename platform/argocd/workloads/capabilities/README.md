@@ -1,4 +1,5 @@
 # Platform capabilities
 
-Placeholder Kustomize root for shared capabilities and policies introduced by
-later stories. It intentionally contains no capability manifests.
+Reserved Kustomize root for later shared capabilities and policies. The current
+capabilities Application sources the Crossplane API root at
+`platform/crossplane`.

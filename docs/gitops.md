@@ -7,10 +7,14 @@ not install Argo CD and have not been applied to a cluster.
 
 The bootstrap AppProject restricts sources to this repository and destinations
 to the `argocd`, `platform-system`, and `user-space` namespaces on the
-in-cluster Kubernetes API. Its cluster-scoped allowlist contains only
-`Namespace`. Later stories such as Crossplane must add each required
-cluster-scoped kind explicitly through review; wildcard cluster permissions are
-not part of this bootstrap.
+in-cluster Kubernetes API. Its cluster-scoped allowlist contains `Namespace`
+and the exact Crossplane package, definition, composition, and RBAC kinds used
+by MDP-5. Additional cluster-scoped kinds require reviewed allowlist changes;
+wildcard cluster permissions are not used.
+
+The namespaced allowlist contains only the Argo CD `Application` kind required
+by the App-of-Apps hierarchy. Later stories may add specific namespaced kinds
+when user-space declarations become GitOps-managed; they are not pre-authorized.
 
 The root Application reconciles three child Applications:
 
@@ -21,10 +25,11 @@ muztagh-platform
 └── muztagh-user-space            (sync wave 20)
 ```
 
-The child sources are empty Kustomize roots. Later stories can add controllers,
-shared capabilities or policies, and domain declarations without changing the
-bootstrap model. ApplicationSet is not used because three static boundaries do
-not require generation.
+The controllers layer reconciles the pinned Crossplane Function and Provider
+packages. The capabilities layer reconciles XRDs, Compositions, and developer
+RBAC. Crossplane core is a prerequisite and is not installed by this repository.
+The user-space layer remains the boundary for domain declarations. ApplicationSet
+is not used because three static boundaries do not require generation.
 
 Sync waves order the child Application resources as controllers, capabilities,
 then user space. Each child Application reconciles independently. Argo CD does
@@ -72,7 +77,8 @@ replaced by the declared Git state.
 ## Static validation
 
 Run `platform/argocd/scripts/validate.ps1` from PowerShell. It renders the
-bootstrap, Application hierarchy, and every managed Kustomize root with
+bootstrap, Application hierarchy, Crossplane package and capability roots, and
+the user-space root with
 `kubectl kustomize`, then runs `git diff --check`. This validates local YAML and
 Kustomize structure only; schema-aware Argo CD validation requires the Argo CD
 CRD schemas and is not evidence of a live installation.

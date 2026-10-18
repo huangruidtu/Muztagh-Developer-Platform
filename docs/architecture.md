@@ -22,11 +22,12 @@ the correctness of declarations they submit through published interfaces.
 
 ## Non-goals for the reference implementation
 
-The repository contains Terraform structure for the shared AWS foundation and
-Argo CD manifests for GitOps reconciliation. Neither has been applied to a live
-environment. Crossplane, Cilium, Kyverno, CI, observability, CPEmon onboarding,
-workload templates, service-level objectives, and production operating
-procedures remain out of scope.
+The repository contains Terraform structure for the shared AWS foundation,
+Argo CD manifests for GitOps reconciliation, and Crossplane platform API
+manifests. None has been applied to a live environment. Crossplane installation,
+Cilium, Kyverno, CI, observability, CPEmon onboarding, workload templates,
+service-level objectives, and production operating procedures remain out of
+scope.
 
 ## Repository boundaries
 
@@ -41,18 +42,18 @@ The boundaries are deliberate:
 
 - Foundation contains Terraform-owned infrastructure on which platform
   capabilities depend. It is not a place for domain application resources.
-- Platform contains the control plane and developer-facing capabilities. Future
-  implementation may include Argo CD, Crossplane, networking, policy, and
-  observability; none is configured by this story.
+- Platform contains the control plane and developer-facing capabilities. It now
+  includes Argo CD reconciliation and Crossplane API manifests; networking,
+  policy, and observability remain later work.
 - User space contains declarations through published capabilities. It must not
   bypass or redefine the infrastructure foundation or control plane.
 
 ## Architectural direction
 
-The intended control path is declarative: a developer records intent in Git;
-automated validation evaluates it; a delivery component applies approved
-desired state; and reconciliation reports divergence. The named tools that may
-eventually perform these responsibilities are not configured by this story.
+The control path is declarative: a developer records intent in Git, validation
+evaluates it, Argo CD reconciles approved platform configuration, and Crossplane
+translates published API claims into owned resources. Live installation and
+runtime operation are outside the evidence in this repository.
 
 See [delivery-flow.md](delivery-flow.md) for the responsibility-level flow and
 [ownership.md](ownership.md) for decision ownership.

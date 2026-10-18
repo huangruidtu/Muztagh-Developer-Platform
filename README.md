@@ -13,5 +13,6 @@ domain-team declarations.
 
 Read [docs/architecture.md](docs/architecture.md) and
 [docs/terraform-foundation.md](docs/terraform-foundation.md) before changing
-foundation infrastructure. Terraform configuration is present; no live
+foundation infrastructure. The developer contracts are documented in
+[platform/crossplane/README.md](platform/crossplane/README.md). No live
 infrastructure is provisioned by this repository change.

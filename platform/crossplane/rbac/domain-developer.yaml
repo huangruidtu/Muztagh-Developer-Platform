@@ -1,0 +1,25 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: muztagh-domain-developer
+rules:
+  - apiGroups:
+      - platform.muztagh.io
+    resources:
+      - applications
+      - datastores
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - platform.muztagh.io
+    resources:
+      - applications/status
+      - datastores/status
+    verbs:
+      - get

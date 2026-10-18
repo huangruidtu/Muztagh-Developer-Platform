@@ -1,0 +1,43 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: workspace.platform.muztagh.io
+spec:
+  compositeTypeRef:
+    apiVersion: platform.muztagh.io/v1alpha1
+    kind: Workspace
+  mode: Pipeline
+  pipeline:
+    - step: compose-workspace
+      functionRef:
+        name: function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: namespace
+            base:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                labels:
+                  app.kubernetes.io/managed-by: crossplane
+                  platform.muztagh.io/managed-by: platform
+                  platform.muztagh.io/platform: muztagh
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: metadata.name
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.owner
+                toFieldPath: metadata.labels[platform.muztagh.io/owner]
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.environment
+                toFieldPath: metadata.labels[platform.muztagh.io/environment]
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.costCenter
+                toFieldPath: metadata.labels[platform.muztagh.io/cost-center]
+            readinessChecks:
+              - type: MatchString
+                fieldPath: status.phase
+                matchString: Active

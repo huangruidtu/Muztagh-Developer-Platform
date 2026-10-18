@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/huangruidtu/Muztagh-Developer-Platform.git
     targetRevision: main
-    path: platform/argocd/workloads/controllers
+    path: platform/crossplane/packages
   destination:
     server: https://kubernetes.default.svc
     namespace: platform-system

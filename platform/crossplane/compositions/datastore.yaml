@@ -1,0 +1,144 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: datastore.platform.muztagh.io
+spec:
+  compositeTypeRef:
+    apiVersion: platform.muztagh.io/v1alpha1
+    kind: DataStore
+  mode: Pipeline
+  pipeline:
+    - step: compose-datastore
+      functionRef:
+        name: function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: bucket
+            base:
+              apiVersion: s3.aws.m.upbound.io/v1beta1
+              kind: Bucket
+              metadata:
+                annotations:
+                  crossplane.io/external-name: placeholder
+              spec:
+                forProvider:
+                  region: eu-west-1
+                  tags:
+                    ManagedBy: Crossplane
+                    Platform: Muztagh
+                managementPolicies:
+                  - "*"
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.uid
+                toFieldPath: metadata.annotations[crossplane.io/external-name]
+                transforms:
+                  - type: string
+                    string:
+                      type: Format
+                      fmt: muztagh-%s
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: spec.forProvider.tags[DataStore]
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.region
+                toFieldPath: spec.forProvider.region
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.deletionPolicy
+                toFieldPath: spec.managementPolicies
+                transforms:
+                  - type: map
+                    map:
+                      Delete: '["*"]'
+                      Orphan: '["Observe","Create","Update","LateInitialize"]'
+                  - type: convert
+                    convert:
+                      toType: array
+                      format: json
+            readinessChecks:
+              - type: MatchCondition
+                matchCondition:
+                  type: Ready
+                  status: "True"
+          - name: public-access-block
+            base:
+              apiVersion: s3.aws.m.upbound.io/v1beta1
+              kind: BucketPublicAccessBlock
+              spec:
+                forProvider:
+                  blockPublicAcls: true
+                  blockPublicPolicy: true
+                  bucketSelector:
+                    matchControllerRef: true
+                  ignorePublicAcls: true
+                  region: eu-west-1
+                  restrictPublicBuckets: true
+                managementPolicies:
+                  - "*"
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.region
+                toFieldPath: spec.forProvider.region
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.deletionPolicy
+                toFieldPath: spec.managementPolicies
+                transforms:
+                  - type: map
+                    map:
+                      Delete: '["*"]'
+                      Orphan: '["Observe","Create","Update","LateInitialize"]'
+                  - type: convert
+                    convert:
+                      toType: array
+                      format: json
+            readinessChecks:
+              - type: MatchCondition
+                matchCondition:
+                  type: Ready
+                  status: "True"
+          - name: encryption
+            base:
+              apiVersion: s3.aws.m.upbound.io/v1beta1
+              kind: BucketServerSideEncryptionConfiguration
+              spec:
+                forProvider:
+                  bucketSelector:
+                    matchControllerRef: true
+                  region: eu-west-1
+                  rule:
+                    - applyServerSideEncryptionByDefault:
+                        sseAlgorithm: AES256
+                managementPolicies:
+                  - "*"
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.region
+                toFieldPath: spec.forProvider.region
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.deletionPolicy
+                toFieldPath: spec.managementPolicies
+                transforms:
+                  - type: map
+                    map:
+                      Delete: '["*"]'
+                      Orphan: '["Observe","Create","Update","LateInitialize"]'
+                  - type: convert
+                    convert:
+                      toType: array
+                      format: json
+            readinessChecks:
+              - type: MatchCondition
+                matchCondition:
+                  type: Ready
+                  status: "True"

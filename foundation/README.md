@@ -6,4 +6,4 @@ environment compositions.
 
 Terraform owns the shared AWS network, EKS foundation, baseline platform IAM,
 and their lifecycle. It does not own developer-requested resources exposed by
-future Crossplane APIs.
+the Crossplane platform APIs.

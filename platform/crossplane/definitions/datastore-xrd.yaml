@@ -1,0 +1,36 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: datastores.platform.muztagh.io
+spec:
+  group: platform.muztagh.io
+  names:
+    kind: DataStore
+    plural: datastores
+  scope: Namespaced
+  defaultCompositionRef:
+    name: datastore.platform.muztagh.io
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          required:
+            - spec
+          properties:
+            spec:
+              type: object
+              required:
+                - region
+              properties:
+                region:
+                  type: string
+                  pattern: ^[a-z]{2}(-gov)?-[a-z]+-[0-9]+$
+                deletionPolicy:
+                  type: string
+                  default: Delete
+                  enum:
+                    - Delete
+                    - Orphan

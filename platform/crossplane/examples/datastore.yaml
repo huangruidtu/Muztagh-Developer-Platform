@@ -1,0 +1,8 @@
+apiVersion: platform.muztagh.io/v1alpha1
+kind: DataStore
+metadata:
+  name: example-data
+  namespace: team-a
+spec:
+  region: eu-west-1
+  deletionPolicy: Delete

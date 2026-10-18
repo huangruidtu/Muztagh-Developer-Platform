@@ -4,8 +4,8 @@ $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
 $roots = @(
     "platform/argocd/bootstrap",
     "platform/argocd/applications",
-    "platform/argocd/workloads/controllers",
-    "platform/argocd/workloads/capabilities",
+    "platform/crossplane/packages",
+    "platform/crossplane",
     "user-space/gitops"
 )
 
