@@ -1,0 +1,43 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: applications.platform.muztagh.io
+spec:
+  group: platform.muztagh.io
+  names:
+    kind: Application
+    plural: applications
+  scope: Namespaced
+  defaultCompositionRef:
+    name: application.platform.muztagh.io
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          required:
+            - spec
+          properties:
+            spec:
+              type: object
+              required:
+                - image
+                - tag
+              properties:
+                image:
+                  type: string
+                  minLength: 1
+                tag:
+                  type: string
+                  minLength: 1
+                replicas:
+                  type: integer
+                  default: 1
+                  minimum: 0
+                port:
+                  type: integer
+                  default: 8080
+                  minimum: 1
+                  maximum: 65535

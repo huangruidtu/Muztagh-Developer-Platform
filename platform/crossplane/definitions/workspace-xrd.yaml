@@ -1,0 +1,45 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: workspaces.platform.muztagh.io
+spec:
+  group: platform.muztagh.io
+  names:
+    kind: Workspace
+    plural: workspaces
+  scope: Cluster
+  defaultCompositionRef:
+    name: workspace.platform.muztagh.io
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          required:
+            - spec
+          properties:
+            spec:
+              type: object
+              required:
+                - owner
+                - environment
+                - costCenter
+              properties:
+                owner:
+                  type: string
+                  minLength: 1
+                  maxLength: 63
+                  pattern: ^[A-Za-z0-9]([A-Za-z0-9_.-]*[A-Za-z0-9])?$
+                environment:
+                  type: string
+                  enum:
+                    - dev
+                    - staging
+                    - prod
+                costCenter:
+                  type: string
+                  minLength: 1
+                  maxLength: 63
+                  pattern: ^[A-Za-z0-9]([A-Za-z0-9_.-]*[A-Za-z0-9])?$

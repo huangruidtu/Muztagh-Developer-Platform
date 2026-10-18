@@ -28,12 +28,12 @@ and resource-specific `Name` tag where AWS supports it.
 ## Terraform and Crossplane boundary
 
 Terraform owns shared network resources, EKS foundation resources, baseline
-platform IAM, and their lifecycle. Crossplane will later own selected
-developer-requested application-level resources through published self-service
-APIs. A resource has one owner: no Terraform configuration may manage a
-resource managed by Crossplane, and no Crossplane composition may manage a
-Terraform-owned foundation resource.
+platform IAM, and their lifecycle. Crossplane owns selected
+developer-requested application-level resources created through the published
+`Workspace`, `Application`, and `DataStore` APIs. A resource has one owner: no
+Terraform configuration may manage a resource managed by Crossplane, and no
+Crossplane composition may manage a Terraform-owned foundation resource.
 
 The modules contain no credentials or backend configuration. Run initialization
-and validation independently from each environment directory. Applying changes,
-selecting a state backend, and defining Crossplane APIs are later work.
+and validation independently from each environment directory. Applying changes
+and selecting a state backend remain later work.
