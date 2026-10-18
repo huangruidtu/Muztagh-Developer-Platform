@@ -1,7 +1,8 @@
 # Platform
 
-This is the implementation space for platform-team-owned assets. Future
-stories will introduce concrete configuration here only after their ownership,
-interfaces, and operational expectations are defined.
+This directory is the implementation space for the platform control plane and
+developer-facing platform capabilities. Future stories may introduce Argo CD,
+Crossplane, networking, policy, and observability assets here.
 
-Domain workloads and product-specific settings do not belong in this directory.
+Those assets are not implemented by this story. Domain workloads and
+product-specific settings do not belong in this directory.

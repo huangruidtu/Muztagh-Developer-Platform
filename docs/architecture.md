@@ -12,9 +12,10 @@ project.
 
 ## Scope
 
-Muztagh owns the shared platform boundary: common contracts, platform-managed
-configuration, documented interfaces, and the operating conventions for changes
-to those assets.
+Muztagh separates a Terraform-owned shared infrastructure foundation from a
+platform control plane that exposes developer-facing platform capabilities.
+The platform team owns the implementation and documented interfaces for both
+layers.
 
 Domain teams own their applications, domain configuration, data decisions, and
 the correctness of declarations they submit through published interfaces.
@@ -30,19 +31,20 @@ access controls, service-level objectives, or production operating procedures.
 
 | Directory | Intended contents | Primary owner |
 | --- | --- | --- |
-| `foundation/` | Shared, versioned contracts and boundary definitions | Platform team |
-| `platform/` | Platform-managed implementation assets | Platform team |
-| `user-space/` | Domain-team declarations that consume platform contracts | Domain teams |
+| `foundation/` | Terraform-owned shared infrastructure foundation | Platform team |
+| `platform/` | Control-plane implementation and developer-facing capabilities | Platform team |
+| `user-space/` | Domain-team declarations consuming published capabilities | Domain teams |
 | `docs/` | Architecture and working conventions | Platform team, with domain-team review where applicable |
 
 The boundaries are deliberate:
 
-- Foundation changes establish or change a reusable interface. They must be
-  reviewed for compatibility and adoption impact.
-- Platform assets implement shared capabilities behind those interfaces. They
-  are not a place for domain-specific application configuration.
-- User-space content describes a domain team's intended use of published
-  interfaces. It must not bypass or redefine platform implementation.
+- Foundation contains Terraform-owned infrastructure on which platform
+  capabilities depend. It is not a place for domain application resources.
+- Platform contains the control plane and developer-facing capabilities. Future
+  implementation may include Argo CD, Crossplane, networking, policy, and
+  observability; none is configured by this story.
+- User space contains declarations through published capabilities. It must not
+  bypass or redefine the infrastructure foundation or control plane.
 
 ## Architectural direction
 

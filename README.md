@@ -1,13 +1,14 @@
 # Muztagh Developer Platform
 
-Muztagh is a shared internal developer platform. This repository contains its
-platform foundations, platform-owned configuration, and domain-team user space.
+Muztagh is a shared internal developer platform. This repository separates the
+Terraform-owned infrastructure foundation, the platform control plane, and
+domain-team declarations.
 
 ## Repository layout
 
-- `foundation/` — shared contracts and boundary definitions.
-- `platform/` — platform-owned implementation space.
-- `user-space/` — domain-team declarations and examples.
+- `foundation/` — Terraform-owned shared infrastructure foundation.
+- `platform/` — platform control plane and developer-facing capabilities.
+- `user-space/` — domain-team declarations consuming published capabilities.
 - `docs/` — architecture, ownership, and contribution conventions.
 
 Read [docs/architecture.md](docs/architecture.md) before adding implementation
