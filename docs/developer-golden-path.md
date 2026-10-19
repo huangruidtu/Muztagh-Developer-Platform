@@ -22,6 +22,17 @@ changes remain domain-owned unless they affect a shared policy or exception.
 A future UI or CLI may generate the same declarations without changing the
 underlying platform APIs.
 
+## GitOps authorization boundary
+
+The `muztagh` AppProject is limited to provider-side control-plane assets. The
+`muztagh-user-space` AppProject is used only for developer-facing claims. It can
+target tenant namespaces, but its allowlists contain only `Workspace`,
+`Application`, and `DataStore` from `platform.muztagh.io`.
+
+This combines a namespace scope wide enough for multiple tenants with a narrow
+capability set. It does not permit raw Kubernetes workloads, RBAC, networking,
+policy, Argo CD Applications, or AWS managed resources.
+
 ## CPEmon consumer example
 
 The CPEmon example uses only three contracts:
@@ -70,6 +81,12 @@ has created the `cpemon-dev` Namespace before the namespaced requests are
 attempted. The current design relies on Argo CD's bounded retry and subsequent
 reconciliation after the Namespace exists. It is not strict runtime dependency
 gating.
+
+The user-space Argo Application does not use `CreateNamespace=true`. Its
+configured `user-space` namespace is only the default for manifests that omit a
+namespace; current domain claims name their tenant namespace explicitly.
+Crossplane remains responsible for creating `cpemon-dev` from the Workspace
+request.
 
 The current APIs do not provide Kafka, ClickHouse, or other CPEmon-specific
 capabilities. Those needs remain explicitly unsupported rather than being added

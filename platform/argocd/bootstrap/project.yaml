@@ -4,15 +4,13 @@ metadata:
   name: muztagh
   namespace: argocd
 spec:
-  description: Muztagh platform and domain declaration reconciliation
+  description: Muztagh provider-side control-plane reconciliation
   sourceRepos:
     - https://github.com/huangruidtu/Muztagh-Developer-Platform.git
   destinations:
     - namespace: argocd
       server: https://kubernetes.default.svc
     - namespace: platform-system
-      server: https://kubernetes.default.svc
-    - namespace: user-space
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: ""
@@ -29,12 +27,6 @@ spec:
       kind: ClusterRole
     - group: kyverno.io
       kind: ClusterPolicy
-    - group: platform.muztagh.io
-      kind: Workspace
   namespaceResourceWhitelist:
     - group: argoproj.io
       kind: Application
-    - group: platform.muztagh.io
-      kind: Application
-    - group: platform.muztagh.io
-      kind: DataStore
