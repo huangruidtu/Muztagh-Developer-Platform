@@ -6,3 +6,4 @@ spec:
   owner: team-a
   environment: dev
   costCenter: engineering
+  developerGroup: muztagh:team-a-developers

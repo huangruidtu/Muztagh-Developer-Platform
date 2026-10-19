@@ -1,0 +1,24 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: muztagh-service-exposure
+spec:
+  background: true
+  rules:
+    - name: require-cluster-ip-service
+      match:
+        any:
+          - resources:
+              kinds:
+                - Service
+              namespaceSelector:
+                matchLabels:
+                  platform.muztagh.io/managed-by: platform
+                  platform.muztagh.io/platform: muztagh
+      validate:
+        failureAction: Enforce
+        allowExistingViolations: false
+        message: Muztagh workspace Services must use ClusterIP exposure.
+        pattern:
+          spec:
+            type: ClusterIP

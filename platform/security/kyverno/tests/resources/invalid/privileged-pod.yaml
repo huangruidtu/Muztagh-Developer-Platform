@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: privileged-workload
+  namespace: policy-test
+  labels:
+    app.kubernetes.io/managed-by: crossplane
+    platform.muztagh.io/application: privileged-workload
+    platform.muztagh.io/managed-by: platform
+    platform.muztagh.io/platform: muztagh
+spec:
+  containers:
+    - name: application
+      image: registry.example.com/team/privileged-workload:v1.0.0
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      securityContext:
+        privileged: true

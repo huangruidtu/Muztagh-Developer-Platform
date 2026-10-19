@@ -3,8 +3,9 @@
 `bootstrap/` defines the Muztagh AppProject and root platform Application.
 `applications/` defines the child Application hierarchy. The controller and
 capability Applications currently source the Crossplane package and platform
-API roots under `platform/crossplane/`. `workloads/` remains reserved for later
-platform components.
+API roots under `platform/crossplane/`. The guardrails Application sources the
+Kyverno policy root under `platform/security/kyverno/`. `workloads/` remains
+reserved for later platform components.
 
 The manifests assume Argo CD is already installed in the `argocd` namespace.
 This repository does not install Argo CD or apply the bootstrap resources.

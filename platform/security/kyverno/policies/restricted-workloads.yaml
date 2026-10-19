@@ -1,0 +1,24 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: muztagh-restricted-workloads
+spec:
+  background: true
+  rules:
+    - name: require-restricted-pod-security
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaceSelector:
+                matchLabels:
+                  platform.muztagh.io/managed-by: platform
+                  platform.muztagh.io/platform: muztagh
+      validate:
+        failureAction: Enforce
+        allowExistingViolations: false
+        message: Muztagh workloads must satisfy the Kubernetes restricted Pod Security profile.
+        podSecurity:
+          level: restricted
+          version: latest

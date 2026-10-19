@@ -1,0 +1,58 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: muztagh-workspace-guardrails
+policies:
+  - ../policies/required-metadata.yaml
+  - ../policies/restricted-workloads.yaml
+  - ../policies/service-exposure.yaml
+resources:
+  - resources/valid/workspace-namespace.yaml
+  - resources/valid/safe-pod.yaml
+  - resources/valid/cluster-ip-service.yaml
+  - resources/invalid/privileged-pod.yaml
+  - resources/invalid/load-balancer-service.yaml
+  - resources/invalid/missing-metadata-pod.yaml
+results:
+  - policy: muztagh-required-metadata
+    rule: require-workload-metadata
+    resources:
+      - policy-test/safe-workload
+    kind: Pod
+    result: pass
+  - policy: muztagh-restricted-workloads
+    rule: require-restricted-pod-security
+    resources:
+      - policy-test/safe-workload
+    kind: Pod
+    result: pass
+  - policy: muztagh-required-metadata
+    rule: require-service-metadata
+    resources:
+      - policy-test/safe-workload
+    kind: Service
+    result: pass
+  - policy: muztagh-service-exposure
+    rule: require-cluster-ip-service
+    resources:
+      - policy-test/safe-workload
+    kind: Service
+    result: pass
+  - policy: muztagh-restricted-workloads
+    rule: require-restricted-pod-security
+    resources:
+      - policy-test/privileged-workload
+    kind: Pod
+    result: fail
+  - policy: muztagh-service-exposure
+    rule: require-cluster-ip-service
+    resources:
+      - policy-test/external-workload
+    kind: Service
+    result: fail
+  - policy: muztagh-required-metadata
+    rule: require-workload-metadata
+    resources:
+      - policy-test/missing-metadata
+    kind: Pod
+    result: fail

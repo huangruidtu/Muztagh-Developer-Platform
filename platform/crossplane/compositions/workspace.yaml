@@ -41,3 +41,97 @@ spec:
               - type: MatchString
                 fieldPath: status.phase
                 matchString: Active
+          - name: resource-quota
+            base:
+              apiVersion: v1
+              kind: ResourceQuota
+              metadata:
+                name: workspace-defaults
+                labels:
+                  app.kubernetes.io/managed-by: crossplane
+                  platform.muztagh.io/managed-by: platform
+                  platform.muztagh.io/platform: muztagh
+              spec:
+                hard:
+                  limits.cpu: "8"
+                  limits.memory: 16Gi
+                  persistentvolumeclaims: "5"
+                  pods: "20"
+                  requests.cpu: "4"
+                  requests.memory: 8Gi
+                  requests.storage: 100Gi
+                  services: "10"
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: metadata.namespace
+            readinessChecks:
+              - type: None
+          - name: developer-role-binding
+            base:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: RoleBinding
+              metadata:
+                name: domain-developers
+                labels:
+                  app.kubernetes.io/managed-by: crossplane
+                  platform.muztagh.io/managed-by: platform
+                  platform.muztagh.io/platform: muztagh
+              roleRef:
+                apiGroup: rbac.authorization.k8s.io
+                kind: ClusterRole
+                name: muztagh-domain-developer
+              subjects:
+                - apiGroup: rbac.authorization.k8s.io
+                  kind: Group
+                  name: placeholder
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: metadata.namespace
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.developerGroup
+                toFieldPath: subjects[0].name
+            readinessChecks:
+              - type: None
+          - name: tenant-network-policy
+            base:
+              apiVersion: cilium.io/v2
+              kind: CiliumNetworkPolicy
+              metadata:
+                name: workspace-isolation
+                labels:
+                  app.kubernetes.io/managed-by: crossplane
+                  platform.muztagh.io/managed-by: platform
+                  platform.muztagh.io/platform: muztagh
+              spec:
+                description: Restrict tenant workloads to workspace traffic, DNS, and local node health traffic
+                endpointSelector: {}
+                ingress:
+                  - fromEndpoints:
+                      - {}
+                  - fromEntities:
+                      - host
+                egress:
+                  - toEndpoints:
+                      - {}
+                  - toEndpoints:
+                      - matchLabels:
+                          k8s:io.kubernetes.pod.namespace: kube-system
+                          k8s:k8s-app: kube-dns
+                    toPorts:
+                      - ports:
+                          - port: "53"
+                            protocol: ANY
+                        rules:
+                          dns:
+                            - matchPattern: "*"
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: metadata.namespace
+            readinessChecks:
+              - type: MatchCondition
+                matchCondition:
+                  type: Valid
+                  status: "True"

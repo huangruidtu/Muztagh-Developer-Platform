@@ -9,6 +9,7 @@ rules:
       - ""
     resources:
       - namespaces
+      - resourcequotas
       - services
     verbs:
       - create
@@ -22,6 +23,30 @@ rules:
       - apps
     resources:
       - deployments
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - rolebindings
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - cilium.io
+    resources:
+      - ciliumnetworkpolicies
     verbs:
       - create
       - delete

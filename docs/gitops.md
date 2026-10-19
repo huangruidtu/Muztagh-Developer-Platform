@@ -9,33 +9,38 @@ The bootstrap AppProject restricts sources to this repository and destinations
 to the `argocd`, `platform-system`, and `user-space` namespaces on the
 in-cluster Kubernetes API. Its cluster-scoped allowlist contains `Namespace`
 and the exact Crossplane package, definition, composition, and RBAC kinds used
-by MDP-5. Additional cluster-scoped kinds require reviewed allowlist changes;
-wildcard cluster permissions are not used.
+by MDP-5, plus the Kyverno `ClusterPolicy` kind reconciled by the guardrails
+layer. Additional cluster-scoped kinds require reviewed allowlist changes;
+wildcard cluster permissions are not used. CiliumNetworkPolicy is created by
+Crossplane, not Argo CD, so it is not in the AppProject allowlist.
 
 The namespaced allowlist contains only the Argo CD `Application` kind required
 by the App-of-Apps hierarchy. Later stories may add specific namespaced kinds
 when user-space declarations become GitOps-managed; they are not pre-authorized.
 
-The root Application reconciles three child Applications:
+The root Application reconciles four child Applications:
 
 ```text
 muztagh-platform
 ├── muztagh-platform-controllers  (sync wave 0)
 ├── muztagh-platform-capabilities (sync wave 10)
+├── muztagh-guardrails            (sync wave 15)
 └── muztagh-user-space            (sync wave 20)
 ```
 
 The controllers layer reconciles the pinned Crossplane Function and Provider
 packages. The capabilities layer reconciles XRDs, Compositions, and developer
-RBAC. Crossplane core is a prerequisite and is not installed by this repository.
-The user-space layer remains the boundary for domain declarations. ApplicationSet
-is not used because three static boundaries do not require generation.
+RBAC. The guardrails layer reconciles Kyverno ClusterPolicies. Crossplane,
+Cilium, and Kyverno controllers and CRDs are prerequisites and are not installed
+by this repository. The user-space layer remains the boundary for domain
+declarations. ApplicationSet is not used because four static boundaries do not
+require generation.
 
 Sync waves order the child Application resources as controllers, capabilities,
-then user space. Each child Application reconciles independently. Argo CD does
-not provide the former built-in health assessment for Application custom
-resources by default, so these waves are not a hard runtime-readiness barrier
-between child Applications.
+guardrails, then user space. Each child Application reconciles independently.
+Argo CD does not provide the former built-in health assessment for Application
+custom resources by default, so these waves are not a hard runtime-readiness
+barrier between child Applications or proof that Kyverno is ready.
 
 If strict child-Application readiness gating is required later, Muztagh must add
 an explicit Application health customization or use another dependency
@@ -78,7 +83,7 @@ replaced by the declared Git state.
 
 Run `platform/argocd/scripts/validate.ps1` from PowerShell. It renders the
 bootstrap, Application hierarchy, Crossplane package and capability roots, and
-the user-space root with
+the guardrail and user-space roots with
 `kubectl kustomize`, then runs `git diff --check`. This validates local YAML and
 Kustomize structure only; schema-aware Argo CD validation requires the Argo CD
 CRD schemas and is not evidence of a live installation.

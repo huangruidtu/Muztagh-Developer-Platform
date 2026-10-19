@@ -1,0 +1,49 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: muztagh-required-metadata
+spec:
+  background: true
+  rules:
+    - name: require-workload-metadata
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaceSelector:
+                matchLabels:
+                  platform.muztagh.io/managed-by: platform
+                  platform.muztagh.io/platform: muztagh
+      validate:
+        failureAction: Enforce
+        allowExistingViolations: false
+        message: Muztagh workloads and services require platform ownership and application labels.
+        pattern:
+          metadata:
+            labels:
+              app.kubernetes.io/managed-by: crossplane
+              platform.muztagh.io/application: "?*"
+              platform.muztagh.io/managed-by: platform
+              platform.muztagh.io/platform: muztagh
+    - name: require-service-metadata
+      match:
+        any:
+          - resources:
+              kinds:
+                - Service
+              namespaceSelector:
+                matchLabels:
+                  platform.muztagh.io/managed-by: platform
+                  platform.muztagh.io/platform: muztagh
+      validate:
+        failureAction: Enforce
+        allowExistingViolations: false
+        message: Muztagh workloads and services require platform ownership and application labels.
+        pattern:
+          metadata:
+            labels:
+              app.kubernetes.io/managed-by: crossplane
+              platform.muztagh.io/application: "?*"
+              platform.muztagh.io/managed-by: platform
+              platform.muztagh.io/platform: muztagh
