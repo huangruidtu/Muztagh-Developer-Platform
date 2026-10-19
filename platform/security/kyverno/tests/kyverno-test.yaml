@@ -13,6 +13,7 @@ resources:
   - resources/invalid/privileged-pod.yaml
   - resources/invalid/load-balancer-service.yaml
   - resources/invalid/missing-metadata-pod.yaml
+variables: values.yaml
 results:
   - policy: muztagh-required-metadata
     rule: require-workload-metadata

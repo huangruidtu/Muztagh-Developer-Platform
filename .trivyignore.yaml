@@ -1,0 +1,25 @@
+misconfigurations:
+  - id: AWS-0039
+    paths:
+      - foundation/terraform/modules/eks/main.tf
+    statement: EKS secret encryption requires the later identity and security design.
+  - id: AWS-0164
+    paths:
+      - foundation/terraform/modules/network/main.tf
+    statement: Public subnets intentionally assign public IPs in the reference network.
+  - id: KSV-0056
+    paths:
+      - platform/crossplane/rbac/composition-access.yaml
+    statement: Crossplane requires explicit Service lifecycle access for Application compositions.
+  - id: KSV-0014
+    paths:
+      - platform/security/kyverno/tests/resources/invalid/privileged-pod.yaml
+    statement: This fixture intentionally violates the restricted workload guardrail.
+  - id: KSV-0017
+    paths:
+      - platform/security/kyverno/tests/resources/invalid/privileged-pod.yaml
+    statement: This fixture intentionally violates the restricted workload guardrail.
+  - id: KSV-0118
+    paths:
+      - platform/security/kyverno/tests/resources/invalid/privileged-pod.yaml
+    statement: This fixture intentionally violates the restricted workload guardrail.

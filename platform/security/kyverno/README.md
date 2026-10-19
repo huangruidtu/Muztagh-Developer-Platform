@@ -14,7 +14,8 @@ The manifests use `kyverno.io/v1` ClusterPolicy and rule-level
 `validate.failureAction`; the deprecated policy-level
 `spec.validationFailureAction` field is not used. Kyverno 1.19 deprecates the
 ClusterPolicy kind in favor of CEL-based policy types, so a later migration must
-be handled as an explicit API and GitOps change.
+be handled as an explicit API and GitOps change. CI tests the current policy
+contract with Kyverno CLI 1.19.1.
 
 The Application Composition supplies labels, non-root execution, RuntimeDefault
 seccomp, disabled privilege escalation, and dropped Linux capabilities. Images

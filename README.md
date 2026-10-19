@@ -19,5 +19,7 @@ guardrails in [docs/tenancy-security.md](docs/tenancy-security.md). The
 Git/YAML consumer workflow is in
 [docs/developer-golden-path.md](docs/developer-golden-path.md). The layered
 health model and day-2 runbooks start at
-[docs/operations/platform-health.md](docs/operations/platform-health.md). No
-live infrastructure is provisioned by this repository.
+[docs/operations/platform-health.md](docs/operations/platform-health.md). Pull
+request quality gates are documented in
+[docs/ci-validation.md](docs/ci-validation.md). No live infrastructure is
+provisioned by this repository.
