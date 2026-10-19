@@ -14,3 +14,7 @@ Prefer short documents with a defined audience, explicit decisions, and links
 to the source files or issues that define implementation work. Update the
 relevant document in the same pull request when a repository boundary,
 contract, workflow, or ownership decision changes.
+
+Use [the ADR index](adr/README.md) for decisions with durable architectural
+consequences. Use [the truth boundary](truth-boundary.md) to distinguish source
+artifacts, static execution evidence, and behavior that requires a live system.

@@ -1,19 +1,37 @@
 # Request and reconciliation flow
 
-This document describes responsibilities. The repository contains declarative
-configuration but no evidence of a live deployment.
+```text
+Developer change
+  -> feature branch
+  -> pull request
+  -> Terraform / manifest / policy / security jobs
+  -> required-check
+  -> review
+  -> merge to main
+  -> Argo CD desired-state reconciliation
+  -> Crossplane composed resources
+  -> readiness and consumer verification
+```
 
-1. A developer changes a domain declaration in `user-space/` or a
-   platform-owned asset in `platform/`.
-2. The change is proposed through a feature branch and pull request.
-3. Validation checks the change against the applicable contracts and policies.
-4. After review and merge, Argo CD can reconcile the repository's desired state.
-5. Crossplane can translate platform API claims into composed resources and
-   report divergence or failed reconciliation for the responsible owner.
+The GitHub Actions workflow implements four primary jobs:
 
-Responsibility remains explicit at each handoff: the author owns the intent;
-reviewers own approval within their area; the platform team owns shared
-interfaces and components; and a domain team owns the domain outcome.
+- `terraform`: format, offline init/validate, and TFLint.
+- `manifests`: actionlint, yamllint, repository validation scripts,
+  Kubeconform, negative fixtures, and whitespace checks.
+- `policy`: Kyverno CLI tests.
+- `security`: Trivy vulnerability/misconfiguration and Gitleaks scans.
 
-CI and policy tooling remain future work. Runtime configuration, credentials,
-and live failure handling are environment responsibilities outside this story.
+`required-check` succeeds only when all four primary jobs succeed. The workflow
+exists and has run successfully; this repository does not claim that GitHub
+branch protection is configured to require it.
+
+After merge, the manifests describe an intended runtime flow. Argo CD reconciles
+approved Git state, and Crossplane translates accepted platform claims into
+composed resources. No live cluster reconciliation is evidenced here. Runtime
+credentials, controller installation, and production deployment remain
+environment responsibilities.
+
+The author owns the submitted intent, reviewers own approval within their
+areas, the platform team owns shared contracts and reconcilers, and the domain
+team owns the service outcome. See [ownership](ownership.md) and
+[CI validation](ci-validation.md).
