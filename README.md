@@ -17,5 +17,7 @@ foundation infrastructure. The developer contracts are documented in
 [platform/crossplane/README.md](platform/crossplane/README.md), with tenancy and
 guardrails in [docs/tenancy-security.md](docs/tenancy-security.md). The
 Git/YAML consumer workflow is in
-[docs/developer-golden-path.md](docs/developer-golden-path.md). No live
-infrastructure is provisioned by this repository.
+[docs/developer-golden-path.md](docs/developer-golden-path.md). The layered
+health model and day-2 runbooks start at
+[docs/operations/platform-health.md](docs/operations/platform-health.md). No
+live infrastructure is provisioned by this repository.
