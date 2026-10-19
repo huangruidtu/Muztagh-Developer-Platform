@@ -1,0 +1,12 @@
+apiVersion: platform.muztagh.io/v1alpha1
+kind: Application
+metadata:
+  name: cpemon-api
+  namespace: cpemon-dev
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  image: registry.example.com/cpemon/cpemon-api
+  tag: v0.1.0
+  replicas: 2
+  port: 8080

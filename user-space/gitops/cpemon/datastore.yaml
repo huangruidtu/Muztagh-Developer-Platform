@@ -1,0 +1,10 @@
+apiVersion: platform.muztagh.io/v1alpha1
+kind: DataStore
+metadata:
+  name: cpemon-backup
+  namespace: cpemon-dev
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  region: eu-west-1
+  deletionPolicy: Orphan

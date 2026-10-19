@@ -5,18 +5,26 @@ not install Argo CD and have not been applied to a cluster.
 
 ## Application hierarchy
 
-The bootstrap AppProject restricts sources to this repository and destinations
-to the `argocd`, `platform-system`, and `user-space` namespaces on the
-in-cluster Kubernetes API. Its cluster-scoped allowlist contains `Namespace`
-and the exact Crossplane package, definition, composition, and RBAC kinds used
-by MDP-5, plus the Kyverno `ClusterPolicy` kind reconciled by the guardrails
-layer. Additional cluster-scoped kinds require reviewed allowlist changes;
-wildcard cluster permissions are not used. CiliumNetworkPolicy is created by
-Crossplane, not Argo CD, so it is not in the AppProject allowlist.
+Bootstrap defines two AppProjects with separate authorization boundaries:
 
-The namespaced allowlist contains only the Argo CD `Application` kind required
-by the App-of-Apps hierarchy. Later stories may add specific namespaced kinds
-when user-space declarations become GitOps-managed; they are not pre-authorized.
+- `muztagh` reconciles provider-side control-plane assets. Its destinations are
+  limited to `argocd` and `platform-system`, and its allowlists contain the
+  Argo CD child `Application`, `Namespace`, exact Crossplane package,
+  definition, Composition and RBAC kinds, and Kyverno `ClusterPolicy`.
+- `muztagh-user-space` reconciles domain requests from this repository. It can
+  currently target only the approved `cpemon-dev` tenant Namespace on the
+  in-cluster API, and permits only the cluster-scoped
+  `platform.muztagh.io/Workspace` and namespaced
+  `platform.muztagh.io/Application` and `DataStore` kinds.
+
+The platform team adds an approved tenant Namespace to the destination boundary
+during onboarding. After that approval, the domain team can self-service the
+allowlisted capabilities inside its Workspace. Future automation may register
+approved tenant Namespaces, but MDP-7 does not implement that mechanism or
+change the platform APIs. The project cannot reconcile Argo CD Applications,
+Namespaces, workloads, RBAC, Cilium or Kyverno policy, or AWS provider
+resources. Crossplane creates those implementation resources from the allowed
+claims.
 
 The root Application reconciles four child Applications:
 
@@ -33,8 +41,9 @@ packages. The capabilities layer reconciles XRDs, Compositions, and developer
 RBAC. The guardrails layer reconciles Kyverno ClusterPolicies. Crossplane,
 Cilium, and Kyverno controllers and CRDs are prerequisites and are not installed
 by this repository. The user-space layer remains the boundary for domain
-declarations. ApplicationSet is not used because four static boundaries do not
-require generation.
+declarations, including the CPEmon example, and references the
+`muztagh-user-space` project. ApplicationSet is not used because four static
+boundaries do not require generation.
 
 Sync waves order the child Application resources as controllers, capabilities,
 guardrails, then user space. Each child Application reconciles independently.

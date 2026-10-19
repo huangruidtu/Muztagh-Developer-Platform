@@ -6,20 +6,18 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "20"
 spec:
-  project: muztagh
+  project: muztagh-user-space
   source:
     repoURL: https://github.com/huangruidtu/Muztagh-Developer-Platform.git
     targetRevision: main
     path: user-space/gitops
   destination:
     server: https://kubernetes.default.svc
-    namespace: user-space
+    namespace: cpemon-dev
   syncPolicy:
     automated:
       prune: false
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
     retry:
       limit: 3
       backoff:

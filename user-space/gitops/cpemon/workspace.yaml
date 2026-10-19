@@ -1,0 +1,11 @@
+apiVersion: platform.muztagh.io/v1alpha1
+kind: Workspace
+metadata:
+  name: cpemon-dev
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  owner: cpemon
+  environment: dev
+  costCenter: connectivity
+  developerGroup: muztagh:cpemon-developers

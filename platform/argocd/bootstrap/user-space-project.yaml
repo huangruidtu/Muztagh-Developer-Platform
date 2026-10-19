@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: muztagh-user-space
+  namespace: argocd
+spec:
+  description: Muztagh developer-facing platform API requests
+  sourceRepos:
+    - https://github.com/huangruidtu/Muztagh-Developer-Platform.git
+  destinations:
+    - namespace: cpemon-dev
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: platform.muztagh.io
+      kind: Workspace
+  namespaceResourceWhitelist:
+    - group: platform.muztagh.io
+      kind: Application
+    - group: platform.muztagh.io
+      kind: DataStore
