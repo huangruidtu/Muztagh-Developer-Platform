@@ -25,9 +25,9 @@ the correctness of declarations they submit through published interfaces.
 The repository contains Terraform structure for the shared AWS foundation,
 Argo CD manifests for GitOps reconciliation, and Crossplane platform API
 manifests. None has been applied to a live environment. Crossplane installation,
-Cilium, Kyverno, CI, observability, CPEmon onboarding, workload templates,
-service-level objectives, and production operating procedures remain out of
-scope.
+Cilium and Kyverno installation, CI, observability, CPEmon onboarding, workload
+templates, service-level objectives, and production operating procedures remain
+out of scope.
 
 ## Repository boundaries
 
@@ -43,8 +43,8 @@ The boundaries are deliberate:
 - Foundation contains Terraform-owned infrastructure on which platform
   capabilities depend. It is not a place for domain application resources.
 - Platform contains the control plane and developer-facing capabilities. It now
-  includes Argo CD reconciliation and Crossplane API manifests; networking,
-  policy, and observability remain later work.
+  includes Argo CD reconciliation, Crossplane APIs, tenant network-policy
+  intent, and Kyverno guardrails; observability remains later work.
 - User space contains declarations through published capabilities. It must not
   bypass or redefine the infrastructure foundation or control plane.
 

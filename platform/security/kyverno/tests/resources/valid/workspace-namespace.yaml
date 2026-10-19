@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: policy-test
+  labels:
+    app.kubernetes.io/managed-by: crossplane
+    platform.muztagh.io/cost-center: engineering
+    platform.muztagh.io/environment: dev
+    platform.muztagh.io/managed-by: platform
+    platform.muztagh.io/owner: team-a
+    platform.muztagh.io/platform: muztagh

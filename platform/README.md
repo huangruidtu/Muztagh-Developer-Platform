@@ -8,5 +8,7 @@ The Crossplane API definitions, Compositions, and package prerequisites are
 under [crossplane/](crossplane/). Crossplane core is an external prerequisite;
 these manifests do not install or run it.
 
-Networking, policy, and observability assets remain later work. Domain workloads
-and product-specific settings do not belong in this directory.
+Platform-owned admission guardrails are under [security/](security/). Cilium
+and Kyverno are runtime prerequisites and are not installed here. Observability
+remains later work. Domain workloads and product-specific settings do not belong
+in this directory.

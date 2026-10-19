@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-workload
+  namespace: policy-test
+  labels:
+    app.kubernetes.io/managed-by: crossplane
+    platform.muztagh.io/application: external-workload
+    platform.muztagh.io/managed-by: platform
+    platform.muztagh.io/platform: muztagh
+spec:
+  type: LoadBalancer
+  selector:
+    platform.muztagh.io/application: external-workload
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

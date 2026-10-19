@@ -27,6 +27,8 @@ spec:
       kind: Provider
     - group: rbac.authorization.k8s.io
       kind: ClusterRole
+    - group: kyverno.io
+      kind: ClusterPolicy
   namespaceResourceWhitelist:
     - group: argoproj.io
       kind: Application

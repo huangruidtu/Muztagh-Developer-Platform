@@ -7,7 +7,7 @@ to be installed separately and does not represent a live cluster deployment.
 
 | API | Scope | Developer inputs | Composed resources |
 | --- | --- | --- | --- |
-| `Workspace` | Cluster | `owner`, `environment`, `costCenter` | Namespace with platform ownership labels |
+| `Workspace` | Cluster | `owner`, `environment`, `costCenter`, `developerGroup` | Namespace, ResourceQuota, tenant RoleBinding, and CiliumNetworkPolicy |
 | `Application` | Namespaced | `image`, `tag`, `replicas`, `port` | Deployment and ClusterIP Service |
 | `DataStore` | Namespaced | `region`, `deletionPolicy` | S3 bucket, public-access block, and SSE-S3 encryption configuration |
 
@@ -31,6 +31,9 @@ Application objects but do not prove that packages are healthy before the
 capabilities Application reconciles; strict readiness gating remains a separate
 control-plane concern.
 
+Cilium and its `cilium.io/v2` CRDs must also exist before Workspace resources
+can reconcile. Cilium installation is not part of this repository.
+
 The S3 Composition expects an `aws.m.upbound.io/v1beta1` cluster provider
 configuration named `default`. Credentials and that `ClusterProviderConfig` are
 environment-specific prerequisites and are intentionally absent from Git.
@@ -39,13 +42,14 @@ environment-specific prerequisites and are intentionally absent from Git.
 
 `muztagh-domain-developer` grants CRUD access to namespaced `Application` and
 `DataStore` resources and read access to their status subresources. It grants no
-access to cluster-scoped `Workspace` resources. No binding is included because
-identity-to-team membership is environment-specific.
+access to cluster-scoped `Workspace` resources. Each Workspace binds only its
+`developerGroup` to this ClusterRole inside the composed Namespace.
 
 `muztagh:aggregate-to-crossplane` grants the Crossplane service account the
-Namespace, Deployment, and Service permissions required by the Compositions.
-It relies on the RBAC manager included with a standard Crossplane installation;
-an installation that disables that component must bind equivalent permissions.
+explicit Namespace, ResourceQuota, RoleBinding, CiliumNetworkPolicy,
+Deployment, and Service permissions required by the Compositions. It relies on
+the RBAC manager included with a standard Crossplane installation; an
+installation that disables that component must bind equivalent permissions.
 
 Examples under `examples/` illustrate the API only and are not included in an
 Argo CD managed root.

@@ -6,6 +6,7 @@ $roots = @(
     "platform/argocd/applications",
     "platform/crossplane/packages",
     "platform/crossplane",
+    "platform/security/kyverno",
     "user-space/gitops"
 )
 
