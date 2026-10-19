@@ -44,6 +44,14 @@ rules:
       - update
       - watch
   - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterroles
+    resourceNames:
+      - muztagh-domain-developer
+    verbs:
+      - bind
+  - apiGroups:
       - cilium.io
     resources:
       - ciliumnetworkpolicies

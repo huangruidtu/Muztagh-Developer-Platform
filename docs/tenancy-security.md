@@ -31,6 +31,11 @@ developerGroup
 The ClusterRole does not grant direct Deployment, Service, Namespace, RBAC,
 Cilium, Kyverno, or cluster-wide administration permissions.
 
+Crossplane may create tenant RoleBindings and may bind only
+`ClusterRole/muztagh-domain-developer`. This explicit `bind` permission
+satisfies Kubernetes RBAC privilege-escalation protection without allowing
+arbitrary ClusterRole binding.
+
 ## Network model
 
 The namespaced Cilium policy selects every workload endpoint. Policy selection
