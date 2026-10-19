@@ -29,6 +29,12 @@ spec:
       kind: ClusterRole
     - group: kyverno.io
       kind: ClusterPolicy
+    - group: platform.muztagh.io
+      kind: Workspace
   namespaceResourceWhitelist:
     - group: argoproj.io
       kind: Application
+    - group: platform.muztagh.io
+      kind: Application
+    - group: platform.muztagh.io
+      kind: DataStore

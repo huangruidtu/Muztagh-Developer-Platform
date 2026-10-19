@@ -14,9 +14,12 @@ layer. Additional cluster-scoped kinds require reviewed allowlist changes;
 wildcard cluster permissions are not used. CiliumNetworkPolicy is created by
 Crossplane, not Argo CD, so it is not in the AppProject allowlist.
 
-The namespaced allowlist contains only the Argo CD `Application` kind required
-by the App-of-Apps hierarchy. Later stories may add specific namespaced kinds
-when user-space declarations become GitOps-managed; they are not pre-authorized.
+The user-space layer directly reconciles the cluster-scoped
+`platform.muztagh.io/Workspace` request and namespaced
+`platform.muztagh.io/Application` and `DataStore` requests. Those three exact
+kinds are allowlisted alongside the Argo CD `Application` kind. Crossplane, not
+Argo CD, creates their Namespace, workload, policy, and provider resources, so
+those implementation kinds are not added to the AppProject allowlists.
 
 The root Application reconciles four child Applications:
 
@@ -33,8 +36,8 @@ packages. The capabilities layer reconciles XRDs, Compositions, and developer
 RBAC. The guardrails layer reconciles Kyverno ClusterPolicies. Crossplane,
 Cilium, and Kyverno controllers and CRDs are prerequisites and are not installed
 by this repository. The user-space layer remains the boundary for domain
-declarations. ApplicationSet is not used because four static boundaries do not
-require generation.
+declarations, including the CPEmon example. ApplicationSet is not used because
+four static boundaries do not require generation.
 
 Sync waves order the child Application resources as controllers, capabilities,
 guardrails, then user space. Each child Application reconciles independently.
