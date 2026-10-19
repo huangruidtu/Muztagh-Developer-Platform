@@ -23,7 +23,7 @@ foreach ($root in $roots) {
 $kyverno = Get-Command kyverno -ErrorAction SilentlyContinue
 if ($kyverno) {
     Write-Host "Running Kyverno policy tests"
-    & $kyverno.Source test (Join-Path $repositoryRoot "platform/security/kyverno/tests") --remove-color
+    & $kyverno.Source test (Join-Path $repositoryRoot "platform/security/kyverno/tests") --remove-color --require-tests
     if ($LASTEXITCODE -ne 0) {
         throw "Kyverno policy tests failed."
     }

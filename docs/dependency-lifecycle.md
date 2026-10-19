@@ -67,11 +67,19 @@ or risk-acceptance decisions.
 
 ## Controls
 
-Future dependency controls may include explicit version pinning, automated
-dependency notifications, vulnerability scanning, release-note and deprecation
-review, CI validation against supported versions, policy tests, and controlled
-upgrades through pull requests. MDP-6 does not implement these controls; CI and
-automated dependency hygiene belong primarily to MDP-9.
+MDP-9 adds concrete controls around this lifecycle:
+
+- immutable commit pins for GitHub Actions and explicit CI tool versions;
+- weekly Dependabot checks for GitHub Actions and Terraform providers;
+- Kyverno policy tests against the pinned 1.19.1 CLI compatibility target;
+- Terraform, manifest, workflow, and schema checks on pull requests;
+- Trivy repository/IaC scanning and Gitleaks history scanning; and
+- reviewed dependency upgrades through the same stable CI gate as other
+  changes.
+
+Release-note and deprecation review remains necessary because automated version
+updates cannot determine whether a policy API migration preserves guardrail
+behavior.
 
 ## Practical takeaway
 
