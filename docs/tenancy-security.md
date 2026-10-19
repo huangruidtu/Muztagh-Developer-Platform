@@ -85,3 +85,6 @@ Cilium, Kyverno, and their CRDs must be installed by the target environment.
 The repository owns policy intent only. Static rendering does not prove Cilium
 traffic behavior, Kyverno admission, Crossplane reconciliation, or Kubernetes
 authorization on a live cluster.
+
+The Kyverno `ClusterPolicy` compatibility decision and future migration path
+are recorded in [dependency-lifecycle.md](dependency-lifecycle.md).
