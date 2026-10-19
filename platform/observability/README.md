@@ -8,7 +8,7 @@ root.
 The rules use metrics documented by the current upstream projects:
 
 - Argo CD `argocd_app_info` with `project`, `sync_status`, and `health_status`
-  labels, and `argocd_app_sync_total` with the `phase` label.
+  labels, and `argocd_app_sync_total` with the `phase` and `dry_run` labels.
 
 Sources:
 
@@ -20,6 +20,10 @@ The `for` durations are reference operational defaults, not production SLOs or
 validated incident thresholds. The expressions select Applications in the
 `argocd` namespace and the repository's `muztagh` and `muztagh-user-space`
 projects.
+
+The repeated-failure rule excludes `dry_run="true"` series and sums the
+separate `Error` and `Failed` phase counters by Application before applying the
+threshold.
 
 Crossplane documents provider-wide `crossplane_managed_resource_*` metrics,
 but their current labels do not identify a Muztagh claim or tenant. No alert is

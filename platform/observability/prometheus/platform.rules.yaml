@@ -21,7 +21,11 @@ groups:
           description: Application {{ $labels.name }} in project {{ $labels.project }} has remained Degraded for 10 minutes.
       - alert: MuztaghArgoRepeatedSyncFailures
         expr: |
-          increase(argocd_app_sync_total{namespace="argocd",project=~"^(muztagh|muztagh-user-space)$",phase=~"^(Error|Failed)$"}[15m]) >= 2
+          sum by (namespace, name, project) (
+            increase(
+              argocd_app_sync_total{namespace="argocd",project=~"^(muztagh|muztagh-user-space)$",phase=~"^(Error|Failed)$",dry_run="false"}[15m]
+            )
+          ) >= 2
         for: 5m
         labels:
           severity: warning
