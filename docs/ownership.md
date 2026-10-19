@@ -1,21 +1,29 @@
 # Ownership model
 
-Ownership is assigned by responsibility rather than by repository write access.
-Platform teams publish and maintain shared interfaces; domain teams choose and
-operate their workloads within those interfaces.
+Ownership follows the reconciler and resource boundary, not repository write
+access.
 
-| Area | Platform team | Domain team |
+| Area | Owner | Concrete responsibility |
 | --- | --- | --- |
-| Infrastructure foundation | Owns Terraform-managed shared infrastructure and its lifecycle | Does not manage shared foundation resources |
-| Control plane | Owns platform implementation and published capability interfaces | Consumes published capabilities |
-| Delivery and reconciliation | Defines the GitOps boundary and reconciliation ownership | Supplies domain declarations through supported interfaces |
-| Platform APIs and policy | Owns Workspace lifecycle, quotas, RBAC, network isolation, workload defaults, and admission policy | Consumes APIs and cannot change the tenant boundary through normal inputs |
-| Applications | Provides shared delivery constraints and security defaults | Owns images, supported configuration, runtime behavior, and data semantics |
-| Operations | Operates shared platform components once introduced | Operates domain services and responds to domain alerts and incidents |
+| Shared AWS/EKS foundation | Platform team through Terraform | Network, EKS, baseline platform identity, and their lifecycle |
+| Git desired state | Platform team through Argo CD | Reconcile approved platform and user-space manifests from `main` |
+| Platform capabilities | Platform team through Crossplane | XRD contracts, Compositions, provider integration, composed-resource readiness |
+| Tenancy and guardrails | Platform team | Workspace boundary, quota, RBAC, network-policy intent, workload defaults, and Kyverno policy |
+| Domain workload intent | Domain team | Supported application image, version, replicas, port, datastore request, and Workspace metadata |
+| Domain behavior | Domain team | Business logic, application configuration outside the platform contract, data semantics, and domain health |
+| Shared operating model | Platform team | Platform alerts, dependency lifecycle, and platform runbooks |
+| Domain operations | Domain team, with platform escalation where needed | Service health, application failures, and evidence needed for handoff |
 
-The matrix does not grant a team unilateral control over another team's assets.
-An interface change follows the Git and PR workflow, with affected owners
-included in review.
+Terraform and Crossplane ownership is exclusive: Terraform owns the shared
+foundation; Crossplane owns only the selected developer-facing capability
+resources expressed by Compositions. Argo CD submits approved desired state but
+does not replace either resource reconciler.
 
-See [tenancy-security.md](tenancy-security.md) for the concrete Workspace,
-identity, network, and guardrail boundaries.
+Failure ownership depends on evidence. An invalid image or unhealthy application
+is normally a domain issue; a malformed Composition, provider failure, or shared
+controller fault is normally a platform issue. Diagnosis can cross that boundary
+without transferring permanent ownership.
+
+Shared contract changes use a pull request with platform review and domain-team
+review when consumer behavior changes. See [delivery flow](delivery-flow.md) and
+[tenancy and security](tenancy-security.md).

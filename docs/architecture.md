@@ -1,59 +1,97 @@
 # Platform architecture
 
-## Purpose
+Muztagh is organized into three ownership layers. The split keeps the shared
+cloud foundation separate from platform reconciliation and from domain intent.
 
-Muztagh is the shared internal developer platform for domain teams. It provides
-the repository and ownership boundaries through which shared platform
-capabilities can be introduced without placing platform implementation details
-in application repositories.
+## Layers
 
-The platform is defined independently of any source repository outside this
-project.
+| Layer | Repository boundary | Implemented assets | Owner |
+| --- | --- | --- | --- |
+| Foundation | `foundation/terraform/` | VPC, subnets and routing, platform IAM roles, EKS cluster and node group | Platform team through Terraform |
+| Platform control plane | `platform/` | Argo CD hierarchy, Crossplane APIs and Compositions, Cilium policy intent, Kyverno guardrails, Prometheus-compatible rules | Platform team |
+| User space | `user-space/` | CPEmon `Workspace`, `Application`, and `DataStore` declarations | Domain team within platform contracts |
 
-## Scope
+The developer-facing API consists of `Workspace`, `Application`, and
+`DataStore`. XRDs define the request contract; Compositions define the
+platform-owned implementation.
 
-Muztagh separates a Terraform-owned shared infrastructure foundation from a
-platform control plane that exposes developer-facing platform capabilities.
-The platform team owns the implementation and documented interfaces for both
-layers.
+```text
+Foundation                         Platform control plane
+Terraform                          Argo CD
+  -> network                         -> Crossplane packages and APIs
+  -> platform identity               -> Kyverno guardrails
+  -> EKS                              -> user-space declarations
+                                           |
+                                           v
+User space                               Crossplane
+CPEmon claims                              -> Namespace, quota, RBAC
+                                           -> Cilium policy intent
+                                           -> Deployment and Service
+                                           -> S3 resources
+```
 
-Domain teams own their applications, domain configuration, data decisions, and
-the correctness of declarations they submit through published interfaces.
+The repository defines controller and policy prerequisites; it does not install
+Argo CD, Crossplane, Cilium, Kyverno, Prometheus, or Grafana.
 
-## Non-goals for the reference implementation
+## Foundation flow
 
-The repository contains Terraform structure for the shared AWS foundation,
-Argo CD manifests for GitOps reconciliation, and Crossplane platform API
-manifests. None has been applied to a live environment. Crossplane installation,
-Cilium and Kyverno installation, CI, observability, CPEmon onboarding, workload
-templates, service-level objectives, and production operating procedures remain
-out of scope.
+```text
+Platform engineer
+  -> Terraform environment root
+  -> network, platform-identity, and EKS module graph
+  -> intended AWS foundation
+```
 
-## Repository boundaries
+The dev and prod roots compose the same modules rather than duplicate resource
+definitions. The EKS module waits for the complete identity module, including
+policy attachments. Terraform exclusively owns these foundation resources;
+Crossplane does not co-own them.
 
-| Directory | Intended contents | Primary owner |
-| --- | --- | --- |
-| `foundation/` | Terraform-owned shared infrastructure foundation | Platform team |
-| `platform/` | Control-plane implementation and developer-facing capabilities | Platform team |
-| `user-space/` | Domain-team declarations consuming published capabilities | Domain teams |
-| `docs/` | Architecture and working conventions | Platform team, with domain-team review where applicable |
+The code has passed offline formatting, initialization with `-backend=false`,
+validation, and TFLint. No Terraform plan against AWS or `terraform apply` has
+run, and no VPC or EKS cluster has been created as evidence for this repository.
+See [Terraform foundation](terraform-foundation.md).
 
-The boundaries are deliberate:
+## Developer request flow
 
-- Foundation contains Terraform-owned infrastructure on which platform
-  capabilities depend. It is not a place for domain application resources.
-- Platform contains the control plane and developer-facing capabilities. It now
-  includes Argo CD reconciliation, Crossplane APIs, tenant network-policy
-  intent, and Kyverno guardrails; observability remains later work.
-- User space contains declarations through published capabilities. It must not
-  bypass or redefine the infrastructure foundation or control plane.
+```text
+Domain developer
+  -> user-space declaration
+  -> feature branch and pull request
+  -> Terraform / manifest / policy / security checks
+  -> required-check and review
+  -> merge to main
+  -> Argo CD reconciles approved Git state
+  -> Crossplane reconciles the platform claim
+  -> composed resources become ready
+  -> domain team evaluates consumer usability
+```
 
-## Architectural direction
+Argo CD owns reconciliation between Git and submitted claims. Crossplane owns
+semantic reconciliation between claims and composed resources. Kyverno applies
+admission policy to platform-managed workloads when its controller is present;
+the Workspace Composition emits the Cilium network-policy intent that Cilium
+would enforce. No single component owns every layer.
 
-The control path is declarative: a developer records intent in Git, validation
-evaluates it, Argo CD reconciles approved platform configuration, and Crossplane
-translates published API claims into owned resources. Live installation and
-runtime operation are outside the evidence in this repository.
+Automated Argo sync and self-heal are enabled, pruning is disabled, and retries
+are bounded. Sync waves order child `Application` objects but are not a hard
+runtime-readiness barrier between independently reconciling applications. See
+[GitOps reconciliation](gitops.md).
 
-See [delivery-flow.md](delivery-flow.md) for the responsibility-level flow and
-[ownership.md](ownership.md) for decision ownership.
+## Tenancy and authorization
+
+The cluster-scoped `Workspace` establishes the approved tenant boundary.
+Namespaced `Application` and `DataStore` claims are then allowed only inside the
+explicitly approved `cpemon-dev` destination. Crossplane may bind only the
+`muztagh-domain-developer` ClusterRole when composing tenant access. Detailed
+RBAC, policy, readiness, and network behavior is in
+[tenancy and security](tenancy-security.md).
+
+## Operations and validation
+
+The repository contains three Prometheus-compatible Argo CD rules, a dashboard
+model, lifecycle guidance, and runbooks. It does not contain a Prometheus or
+Grafana installation or runtime evidence. GitHub Actions statically checks
+Terraform, manifests, policy behavior, workflow/YAML syntax, vulnerabilities,
+and secrets. See [platform health](operations/platform-health.md),
+[CI validation](ci-validation.md), and [the truth boundary](truth-boundary.md).
