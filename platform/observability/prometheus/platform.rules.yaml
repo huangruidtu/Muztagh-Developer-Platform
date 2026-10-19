@@ -1,0 +1,34 @@
+groups:
+  - name: muztagh.gitops
+    rules:
+      - alert: MuztaghArgoApplicationOutOfSync
+        expr: |
+          argocd_app_info{namespace="argocd",project=~"^(muztagh|muztagh-user-space)$",sync_status="OutOfSync"} == 1
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: Muztagh Argo CD Application remains OutOfSync
+          description: Application {{ $labels.name }} in project {{ $labels.project }} has remained OutOfSync for 15 minutes.
+      - alert: MuztaghArgoApplicationDegraded
+        expr: |
+          argocd_app_info{namespace="argocd",project=~"^(muztagh|muztagh-user-space)$",health_status="Degraded"} == 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Muztagh Argo CD Application remains Degraded
+          description: Application {{ $labels.name }} in project {{ $labels.project }} has remained Degraded for 10 minutes.
+      - alert: MuztaghArgoRepeatedSyncFailures
+        expr: |
+          sum by (namespace, name, project) (
+            increase(
+              argocd_app_sync_total{namespace="argocd",project=~"^(muztagh|muztagh-user-space)$",phase=~"^(Error|Failed)$",dry_run="false"}[15m]
+            )
+          ) >= 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Muztagh Argo CD Application has repeated failed syncs
+          description: Application {{ $labels.name }} in project {{ $labels.project }} recorded at least two failed or errored syncs in 15 minutes.
