@@ -8,7 +8,7 @@ spec:
   sourceRepos:
     - https://github.com/huangruidtu/Muztagh-Developer-Platform.git
   destinations:
-    - namespace: "*"
+    - namespace: cpemon-dev
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: platform.muztagh.io

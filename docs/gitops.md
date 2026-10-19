@@ -12,16 +12,19 @@ Bootstrap defines two AppProjects with separate authorization boundaries:
   Argo CD child `Application`, `Namespace`, exact Crossplane package,
   definition, Composition and RBAC kinds, and Kyverno `ClusterPolicy`.
 - `muztagh-user-space` reconciles domain requests from this repository. It can
-  target tenant namespaces on the in-cluster API, but permits only the
-  cluster-scoped `platform.muztagh.io/Workspace` and namespaced
+  currently target only the approved `cpemon-dev` tenant Namespace on the
+  in-cluster API, and permits only the cluster-scoped
+  `platform.muztagh.io/Workspace` and namespaced
   `platform.muztagh.io/Application` and `DataStore` kinds.
 
-The namespace wildcard in `muztagh-user-space` broadens only the destination
-namespace set. It does not grant unrestricted Kubernetes access because the
-resource-kind allowlists remain narrow. The project cannot reconcile Argo CD
-Applications, Namespaces, workloads, RBAC, Cilium or Kyverno policy, or AWS
-provider resources. Crossplane creates those implementation resources from the
-allowed claims.
+The platform team adds an approved tenant Namespace to the destination boundary
+during onboarding. After that approval, the domain team can self-service the
+allowlisted capabilities inside its Workspace. Future automation may register
+approved tenant Namespaces, but MDP-7 does not implement that mechanism or
+change the platform APIs. The project cannot reconcile Argo CD Applications,
+Namespaces, workloads, RBAC, Cilium or Kyverno policy, or AWS provider
+resources. Crossplane creates those implementation resources from the allowed
+claims.
 
 The root Application reconciles four child Applications:
 

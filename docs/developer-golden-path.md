@@ -25,13 +25,18 @@ underlying platform APIs.
 ## GitOps authorization boundary
 
 The `muztagh` AppProject is limited to provider-side control-plane assets. The
-`muztagh-user-space` AppProject is used only for developer-facing claims. It can
-target tenant namespaces, but its allowlists contain only `Workspace`,
-`Application`, and `DataStore` from `platform.muztagh.io`.
+`muztagh-user-space` AppProject is used only for developer-facing claims. It
+currently targets the approved `cpemon-dev` Namespace, and its allowlists
+contain only `Workspace`, `Application`, and `DataStore` from
+`platform.muztagh.io`.
 
-This combines a namespace scope wide enough for multiple tenants with a narrow
-capability set. It does not permit raw Kubernetes workloads, RBAC, networking,
-policy, Argo CD Applications, or AWS managed resources.
+Onboarding is controlled self-service: the platform team approves the tenant
+Namespace boundary once, then the CPEmon team self-services Application and
+DataStore capabilities inside that boundary. Future automation may register
+approved tenant Namespaces without changing the platform APIs; MDP-7 does not
+implement dynamic registration. The project does not permit raw Kubernetes
+workloads, RBAC, networking, policy, Argo CD Applications, or AWS managed
+resources.
 
 ## CPEmon consumer example
 
@@ -83,10 +88,9 @@ reconciliation after the Namespace exists. It is not strict runtime dependency
 gating.
 
 The user-space Argo Application does not use `CreateNamespace=true`. Its
-configured `user-space` namespace is only the default for manifests that omit a
-namespace; current domain claims name their tenant namespace explicitly.
-Crossplane remains responsible for creating `cpemon-dev` from the Workspace
-request.
+destination is the approved `cpemon-dev` Namespace, which may not exist during
+the first sync. Crossplane remains responsible for creating it from the
+Workspace request.
 
 The current APIs do not provide Kafka, ClickHouse, or other CPEmon-specific
 capabilities. Those needs remain explicitly unsupported rather than being added
