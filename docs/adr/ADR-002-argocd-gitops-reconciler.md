@@ -37,3 +37,13 @@ drift reconciliation or application hierarchy.
 - Dependencies must expose and check their own readiness; wave numbers alone
   cannot prove it.
 - The manifests describe the model, but no live Argo CD reconciliation has run.
+
+## Planned follow-up
+
+Issue [#12](https://github.com/huangruidtu/Muztagh-Developer-Platform/issues/12)
+will design child Application health propagation without changing the four
+layers. It depends on meaningful package and capability signals from
+[#13](https://github.com/huangruidtu/Muztagh-Developer-Platform/issues/13).
+The proposal and live-test boundary are recorded in
+[bootstrap reliability](../operations/bootstrap-reliability.md); this ADR does
+not claim those gates are implemented.

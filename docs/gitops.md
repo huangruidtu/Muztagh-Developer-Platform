@@ -55,6 +55,16 @@ If strict child-Application readiness gating is required later, Muztagh must add
 an explicit Application health customization or use another dependency
 strategy. MDP-4 does not configure either mechanism.
 
+The proposed strategy is tracked in
+[#12](https://github.com/huangruidtu/Muztagh-Developer-Platform/issues/12).
+It would assess both child sync and health status, default missing status to
+`Progressing`, and propagate `Healthy`, `Progressing`, `Degraded`, or `Unknown`
+to the root. This is not implemented. Package and XRD custom resources also
+need meaningful health signals before child health can become a reliable
+dependency gate; that design is tracked in
+[#13](https://github.com/huangruidtu/Muztagh-Developer-Platform/issues/13).
+See [the bootstrap reliability plan](operations/bootstrap-reliability.md).
+
 ## Reconciliation
 
 The `main` branch is the desired-state source of truth. Automated sync is
