@@ -78,6 +78,13 @@ are bounded. Sync waves order child `Application` objects but are not a hard
 runtime-readiness barrier between independently reconciling applications. See
 [GitOps reconciliation](gitops.md).
 
+Bootstrap readiness remains planned work. The root has no child `Application`
+health customization, Crossplane package installation is distinct from package
+health, and API discovery or external-provider readiness is not gated by the
+current wave annotations. The verified dependency model and recovery backlog
+are in [bootstrap reliability](operations/bootstrap-reliability.md); none of
+those proposed gates is represented as current runtime behavior.
+
 ## Tenancy and authorization
 
 The cluster-scoped `Workspace` establishes the approved tenant boundary.

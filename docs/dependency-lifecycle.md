@@ -81,6 +81,16 @@ Release-note and deprecation review remains necessary because automated version
 updates cannot determine whether a policy API migration preserves guardrail
 behavior.
 
+Controller upgrades must also review bootstrap health semantics. Argo CD health
+customizations depend on the selected version's status fields and Lua behavior;
+Crossplane upgrades can change package conditions, generated APIs, or provider
+dependencies. The proposed readiness work in
+[#12](https://github.com/huangruidtu/Muztagh-Developer-Platform/issues/12) and
+[#13](https://github.com/huangruidtu/Muztagh-Developer-Platform/issues/13)
+therefore requires explicit controller version targets and recovery tests. A
+package reporting healthy is not evidence that credentials or an external API
+are usable.
+
 ## Practical takeaway
 
 Dependency management in a platform is not just upgrading versions. An upgrade

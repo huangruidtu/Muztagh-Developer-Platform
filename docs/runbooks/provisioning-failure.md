@@ -89,6 +89,13 @@ ClusterProviderConfig, invalid credentials, insufficient IAM, region/API
 failure, Composition patch error, or blocked deletion/finalizer. Do not expose
 credential material while collecting evidence.
 
+Check the Provider package before the ProviderConfig, but do not conflate the
+two. `Installed=True` identifies an installed active package revision;
+`Healthy=True` establishes package/runtime health. Neither condition validates
+the environment-owned ProviderConfig, its credentials, IAM authorization,
+network reachability, or AWS behavior. The staged checks and failure-injection
+plan are in [bootstrap reliability](../operations/bootstrap-reliability.md).
+
 A Ready provider resource still does not prove that a workload has credentials
 or can perform its intended data operation; application integration and data
 semantics remain a domain responsibility.

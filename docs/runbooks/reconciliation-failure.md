@@ -64,6 +64,13 @@ kubectl get events -n argocd --sort-by=.lastTimestamp
 Correct or revert the Git change for render or authorization errors. Do not
 bypass the AppProject boundary to make a claim sync.
 
+For bootstrap incidents, record child sync and health separately. Until the
+planned `Application` health customization exists, a later wave's presence is
+not proof that an earlier child became healthy. Inspect package revisions, XRD
+establishment, and API discovery before moving downstream. The failure triggers
+and recovery evidence are defined in the
+[bootstrap reliability plan](../operations/bootstrap-reliability.md).
+
 ## 3. Crossplane path
 
 If the claim exists, inspect its conditions and events:
